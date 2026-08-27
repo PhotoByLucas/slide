@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>项目讲述</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F5F2; --surface:#FFFFFF;
+    --ink:#15181B; --ink-soft:#39413F; --muted:#6A7278; --faint:#9AA1A0;
+    --line:#E4E6E1; --line-2:#D3D6CF;
+    --pine:#0C5A45; --pine-ink:#0A4335; --pine-wash:#EBF2EE;
+    --ochre:#B14E08; --ochre-wash:#F9EEE4;
+    --disp:"Space Grotesk","PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --body:"PingFang SC","Microsoft YaHei","Inter",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--paper); color:var(--ink); font-family:var(--body);
+    overflow:hidden; -webkit-font-smoothing:antialiased;
+  }
+  /* faint blueprint grid */
+  .deck{position:relative;height:100vh;width:100vw;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),
+                     linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:34px 34px; background-position:center;
+    background-color:var(--paper);}
+  .deck::before{content:"";position:absolute;inset:0;
+    background:radial-gradient(1100px 620px at 82% -6%, rgba(12,90,69,.05), transparent 60%);}
+
+  .slide{position:absolute;inset:0;opacity:0;pointer-events:none;
+    display:flex;flex-direction:column;padding:6vh 6.5vw 5vh;overflow-y:auto;}
+  .slide.active{opacity:1;pointer-events:auto}
+
+  /* header */
+  .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--pine);font-weight:600;display:flex;align-items:center;gap:10px}
+  .eyebrow .sq{width:7px;height:7px;background:var(--pine);display:inline-block;transform:rotate(45deg)}
+  .folio{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.14em}
+  h1{font-family:var(--disp);font-weight:600;font-size:25px;line-height:1.16;
+    letter-spacing:-.015em;color:var(--ink);margin-top:9px;max-width:30ch}
+  .lead{color:var(--ink-soft);font-size:13px;line-height:1.55;margin-top:9px;max-width:82ch}
+  .lead b{color:var(--ink);font-weight:600}
+  .rule{height:1px;background:var(--line-2);margin:14px 0}
+
+  /* section head */
+  .sh{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .sh .code{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;
+    color:var(--pine);border:1px solid var(--line-2);border-radius:5px;padding:2px 6px;background:var(--surface)}
+  .sh .t{font-family:var(--disp);font-weight:600;font-size:15px;color:var(--ink)}
+  .sh .note{font-size:11.5px;color:var(--muted)}
+  .sh .flag{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;
+    color:var(--ochre);background:var(--ochre-wash);border:1px solid #EAD4C0;border-radius:999px;padding:2px 9px}
+
+  .row{display:flex;gap:18px}
+  .col{flex:1;min-width:0;display:flex;flex-direction:column}
+
+  /* endpoints (三端) */
+  .ends{display:flex;gap:10px;margin-bottom:16px}
+  .end{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:9px;
+    padding:9px 12px;display:flex;flex-direction:column;gap:3px}
+  .end .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--faint)}
+  .end .n{font-family:var(--disp);font-weight:600;font-size:13.5px;color:var(--ink)}
+  .end .s{font-size:11px;color:var(--muted)}
+
+  /* ARCHITECTURE BLUEPRINT — the signature */
+  .arch{border:1px solid var(--line-2);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .arow{display:flex;align-items:stretch;border-bottom:1px solid var(--line);
+    opacity:0;transform:translateY(6px)}
+  .active .arow{animation:rise .5s cubic-bezier(.2,.7,.3,1) forwards}
+  .active .arow:nth-child(1){animation-delay:.05s}
+  .active .arow:nth-child(2){animation-delay:.12s}
+  .active .arow:nth-child(3){animation-delay:.19s}
+  .active .arow:nth-child(4){animation-delay:.26s}
+  .active .arow:nth-child(5){animation-delay:.33s}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .arow:last-child{border-bottom:0}
+  .gutter{flex:0 0 84px;position:relative;border-right:1px solid var(--line-2);
+    display:flex;flex-direction:column;justify-content:center;gap:1px;padding:9px 0 9px 16px}
+  .gutter .lc{font-family:var(--mono);font-weight:600;font-size:11px;color:var(--pine);letter-spacing:.06em}
+  .gutter .ln{font-size:11.5px;color:var(--ink);font-weight:600}
+  /* spine node on the right border of the gutter */
+  .gutter::after{content:"";position:absolute;right:-4.5px;top:50%;transform:translateY(-50%);
+    width:7px;height:7px;border-radius:50%;background:var(--surface);border:1.5px solid var(--pine)}
+  .abody{flex:1;padding:9px 14px;color:var(--ink-soft);font-size:11.8px;line-height:1.5;
+    display:flex;align-items:center}
+  .abody b{color:var(--ink);font-weight:600}
+  .abody .em{color:var(--pine-ink);font-weight:600}
+  .arow.mark{background:var(--pine-wash)}
+  .arow.mark .gutter{border-right-color:var(--pine)}
+  .arow.mark .abody .em{color:var(--pine-ink)}
+  .arow.mark::before{content:"";width:3px;background:var(--pine);flex:0 0 3px}
+
+  /* generic spec card */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:12px 15px;flex:1}
+  .card ul{list-style:none}
+  .card li{position:relative;padding-left:15px;color:var(--ink-soft);font-size:11.8px;line-height:1.5;margin:5px 0}
+  .card li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;background:var(--pine);border-radius:1px}
+  .card li b{color:var(--ink);font-weight:600}
+  .card li .em{color:var(--pine-ink);font-weight:600}
+
+  /* mono flow (real sequence) */
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:2px 0 12px}
+  .node{font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--ink);
+    background:var(--surface);border:1px solid var(--line-2);border-radius:6px;padding:5px 9px}
+  .node.hot{color:#fff;background:var(--ochre);border-color:var(--ochre)}
+  .flow .to{color:var(--pine);font-weight:700;font-family:var(--mono)}
+  .flow.col-dir{flex-direction:column;align-items:stretch;gap:6px}
+  .flow.col-dir .node{text-align:left}
+
+  /* tags */
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .tag{font-family:var(--mono);font-size:11px;color:var(--ink-soft);background:var(--surface);
+    border:1px solid var(--line);border-radius:5px;padding:4px 8px}
+
+  /* project column header */
+  .ph{display:flex;align-items:baseline;gap:9px;margin-bottom:3px}
+  .ph .pc{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--pine)}
+  .ph .pn{font-family:var(--disp);font-weight:600;font-size:16px;color:var(--ink)}
+  .psub{font-size:11.8px;color:var(--muted);margin-bottom:11px;line-height:1.4}
+
+  /* results ledger */
+  .ledger{display:flex;margin-top:auto;border-top:1px solid var(--line-2);padding-top:2px}
+  .cell{flex:1;padding:15px 4px 4px;border-right:1px solid var(--line)}
+  .cell:last-child{border-right:0}
+  .cell .big{font-family:var(--mono);font-weight:600;font-size:23px;color:var(--ink);letter-spacing:-.01em}
+  .cell.hero .big{color:var(--ochre)}
+  .cell .cap{font-size:11.5px;color:var(--muted);margin-top:5px}
+
+  /* mini kpis for project cols */
+  .kpis{display:flex;gap:16px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}
+  .kp .v{font-family:var(--mono);font-weight:600;font-size:16px;color:var(--pine-ink)}
+  .kp .l{font-size:10.5px;color:var(--muted);margin-top:2px}
+
+  /* 2x2 quad grid (slide 2) */
+  .quad{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:16px;min-height:0;margin-top:6px}
+  .qcell{background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;display:flex;flex-direction:column;min-height:0;overflow:auto}
+  .qcell.intro{background:linear-gradient(180deg,var(--pine-wash),var(--surface));border-color:var(--line-2)}
+  .qcell.intro h1{font-size:21px;margin-top:0;max-width:none}
+  .qcell.intro .lead{max-width:none}
+  .qcell ul{list-style:none}
+  .qcell li{position:relative;padding-left:15px;color:var(--ink-soft);font-size:11.8px;line-height:1.5;margin:5px 0}
+  .qcell li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;background:var(--pine);border-radius:1px}
+  .qcell li b{color:var(--ink);font-weight:600}
+  .qcell li .em{color:var(--pine-ink);font-weight:600}
+  .qcell .kpis{margin-top:auto}
+  .idxlist{margin-top:auto;display:flex;flex-direction:column;gap:9px;border-top:1px solid var(--line-2);padding-top:13px}
+  .idxrow{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-size:13.5px;font-weight:600;color:var(--ink)}
+  .idxrow .pc{font-family:var(--mono);color:var(--pine);font-size:11px;border:1px solid var(--line-2);
+    border-radius:5px;padding:1px 7px;background:var(--surface)}
+
+  /* nav */
+  .nav{position:fixed;bottom:24px;right:32px;display:flex;align-items:center;gap:14px;z-index:20}
+  .arrow{width:40px;height:40px;border-radius:8px;border:1px solid var(--line-2);cursor:pointer;
+    background:var(--surface);color:var(--ink);font-family:var(--mono);font-size:16px;
+    display:flex;align-items:center;justify-content:center;transition:.18s}
+  .arrow:hover{background:var(--pine);color:#fff;border-color:var(--pine)}
+  .count{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.1em}
+  .dots{position:fixed;bottom:30px;left:6.5vw;display:flex;gap:8px;z-index:20}
+  .dots i{width:22px;height:3px;background:var(--line-2);cursor:pointer;transition:.25s}
+  .dots i.on{background:var(--pine)}
+  .prog{position:fixed;top:0;left:0;height:2px;background:var(--pine);z-index:30;transition:width .4s}
+  .sig{position:fixed;top:26px;left:6.5vw;font-family:var(--mono);font-size:11px;
+    letter-spacing:.14em;color:var(--faint);z-index:20}
+  @media(prefers-reduced-motion:reduce){.arow{animation:none!important;opacity:1;transform:none}}
+  @media(max-width:980px){.row{flex-direction:column}h1{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<div class="sig"></div>
+<div class="deck" id="deck">
+
+  <!-- ===== 01 小店客服全景：基座 + Agent + 可靠性/迭代/提效 ===== -->
+  <section class="slide active">
+    <div class="top">
+      <div class="eyebrow"><span class="sq"></span>微信小店平台客服</div>
+      <div class="folio">01 / 02</div>
+    </div>
+    <h1>跨端通信基座 → 动态限权多意图 Agent</h1>
+    <p class="lead" style="white-space:nowrap;max-width:none">主导跨端即时通信平台<b>从 0 到 1</b>，高可用支撑<b>日均百万级客诉</b>；抽离人工客服最高频场景，构建可信、可自我进化、并反哺研发的智能客服 Agent。</p>
+    <div class="rule"></div>
+
+    <div class="row" style="align-items:flex-start">
+      <!-- 左：基座 + 五层架构 -->
+      <div class="col" style="flex:1.05">
+        <div class="sh"><span class="code">BASE</span><span class="t">跨三端通信基座</span><span class="note">统一多端协议 + 状态同步</span></div>
+        <div class="ends">
+          <div class="end"><span class="k">MERCHANT·WEB</span><span class="n">商家 Web</span><span class="s">NestJS + Vue</span></div>
+          <div class="end"><span class="k">MERCHANT·APP</span><span class="n">商家 App</span><span class="s">Flutter</span></div>
+          <div class="end"><span class="k">CONSUMER</span><span class="n">C 端消费者</span><span class="s">小程序</span></div>
+        </div>
+        <div class="sh"><span class="code">AGENT</span><span class="t">动态限权多意图架构</span><span class="note">ReAct Loop · 10+ 场景</span></div>
+        <div class="arch">
+          <div class="arow"><div class="gutter"><span class="lc">GW</span><span class="ln">网关层</span></div>
+            <div class="abody">统一接入，衔接三端会话与请求</div></div>
+          <div class="arow"><div class="gutter"><span class="lc">ORCH</span><span class="ln">编排层</span></div>
+            <div class="abody">专注推理循环（ReAct Loop）</div></div>
+          <div class="arow"><div class="gutter"><span class="lc">SKL</span><span class="ln">Skill 层</span></div>
+            <div class="abody">沉淀领域流程，<b>按意图动态加载 Skill 与 Tool</b>，削上下文并提升调用准确率</div></div>
+          <div class="arow"><div class="gutter"><span class="lc">TOOL</span><span class="ln">工具层</span></div>
+            <div class="abody">参数幂等防重复写；错误码不透传，翻译为<b>「动作信号 + 事实文案」</b>；售后复杂流程状态机回滚 checkpoint</div></div>
+          <div class="arow"><div class="gutter"><span class="lc">MEM</span><span class="ln">记忆层</span></div>
+            <div class="abody">会话级过滤，<b>90% 问题在 3 会话内</b>→3 窗口滑动 + 超窗摘要；工具结果存压缩版按需二查；长期记忆按订单维度过期</div></div>
+        </div>
+      </div>
+
+      <!-- 右：防幻觉 + 自进化 -->
+      <div class="col">
+        <div class="sh"><span class="code">R1</span><span class="t">防幻觉 · 高可用</span></div>
+        <div class="card" style="flex:none;margin-bottom:12px">
+          <ul>
+            <li><b>RAG</b>：query 改写 → BM25 + 向量<span class="em">四路召回</span> → RRF → 筛 <b>20 条</b></li>
+            <li>敏感事实<span class="em">强约束 API 实时取</span>并注入，阻断编造</li>
+            <li>赔付接入审计流抽样 review；注入/敏感请求上游拦截</li>
+            <li><b>情绪感知旁路</b>：高危负面 / 投诉切人工兜底</li>
+          </ul>
+        </div>
+        <div class="sh"><span class="code">R2</span><span class="t">自进化体系</span></div>
+        <div class="card" style="flex:none">
+          <div class="flow" style="margin-bottom:9px">
+            <span class="node">数据回流</span><span class="to">›</span>
+            <span class="node">评测诊断</span><span class="to">›</span>
+            <span class="node">提案生成</span><span class="to">›</span>
+            <span class="node">门禁验证</span><span class="to">›</span>
+            <span class="node">MR 审批</span>
+          </div>
+          <ul>
+            <li><b>评测基建</b>：LLM-as-Judge <span class="em">四维打分</span>——忠诚度 / 幻觉率 / 规范度 / 自助业务完成率，集成 CI/CD</li>
+            <li><b>低成本回流</b>：一键标注近 <span class="em">100% 准确</span> Bad Case，<span class="em">6 维粗归因</span>——事实类 / 越权类 / 相关性 / 规范类 / 自助业务失效 / 兜底</li>
+            <li><b>诊断门禁</b>：抓 trace 定位失败阶段（历史理解 / 意图 / skill 命中 / 工具 / RAG / 生成）→ 提案 Diff → 回放验证 → MR；高危立即触发</li>
+          </ul>
+          <div class="kpis">
+            <div class="kp"><div class="v" style="color:var(--ochre)">50%→80%</div><div class="l">自助售后结单率</div></div>
+            <div class="kp"><div class="v">+40 bp</div><div class="l">赔付满意度</div></div>
+            <div class="kp"><div class="v">≈30%↓</div><div class="l">客服人力</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh" style="margin-top:14px"><span class="code">R3</span><span class="t">AI 研发运维基建</span></div>
+    <div class="row" style="margin-bottom:2px">
+      <div class="col card" style="flex:1.7"><ul><li><b>Coding Agent 自校验 + AI UAT</b>：Automator MCP + Skill 化，改动后操作模拟器抓日志/接口/截图自校验，并自主执行验收测试，覆盖 <b>30+ 消息类型</b></li></ul></div>
+      <div class="col card" style="flex:1"><ul><li><b>CodeGraph 告警定位</b>：全链路定位，过滤网络波动等无效告警</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ===== 02 四宫格：概览 + 三项基建 ===== -->
+  <section class="slide">
+    <div class="top">
+      <div class="eyebrow"><span class="sq"></span>微信支付 · 平台与基建</div>
+      <div class="folio">02 / 02</div>
+    </div>
+    <div class="quad">
+
+      <!-- 概览 -->
+      <div class="qcell intro">
+        <h1>金融级运营平台</h1>
+        <p class="lead">支付存储运营、前端监控标准化、研发流程工业化</p>
+        <div class="idxlist">
+          <div class="idxrow"><span class="pc">A</span><span>KV 运营系统</span></div>
+          <div class="idxrow"><span class="pc">B</span><span>Xmonitor 监控</span></div>
+          <div class="idxrow"><span class="pc">C</span><span>Xwatt 研发平台</span></div>
+        </div>
+      </div>
+
+      <!-- A KV -->
+      <div class="qcell">
+        <div class="ph"><span class="pc">A</span><span class="pn">KV 运营系统</span></div>
+        <div class="psub">亿级资金交易核心存储 · 运营超十年 · 重历史债务</div>
+        <ul>
+          <li><b>分层架构 + 统一 RPC 网关</b>，解耦历史 10+ 异构系统，一站式组件管理</li>
+          <li><b>风险治理</b>：「前置校验 + 流程巡检」双校验 + 灰度发布剧本</li>
+          <li>分钟级<b>独立测试环境</b>，各业务线隔离验证</li>
+          <li><span class="em">AI 可运维化</span>：20+ 能力封装 MCP 工具集，自然语言驱动；权限分级 / 审计 / 幂等</li>
+        </ul>
+        <div class="kpis">
+          <div class="kp"><div class="v">+80%</div><div class="l">高频用例效率</div></div>
+        </div>
+      </div>
+
+      <!-- B Xmonitor -->
+      <div class="qcell">
+        <div class="ph"><span class="pc">B</span><span class="pn">Xmonitor 监控</span></div>
+        <div class="psub">web/小程序/liteapp 无入侵式上报 · 五类数据</div>
+        <div class="tags" style="margin-top:0">
+          <span class="tag">用户行为 · history/hash + 埋点</span>
+          <span class="tag">异常 · onerror/rejection</span>
+          <span class="tag">资源 · xhr/fetch/PerfObserver</span>
+          <span class="tag">性能 · Performance API</span>
+          <span class="tag">环境 · UA</span>
+        </div>
+        <ul style="margin-top:9px">
+          <li>打通客户端页面与<b>前后端全链路</b>用户行为分析</li>
+          <li>Node 接入层与数据管理平台 + 消息队列<b>削峰填谷</b>异步消费</li>
+        </ul>
+        <div class="kpis">
+          <div class="kp"><div class="v">1000+</div><div class="l">业务模块</div></div>
+          <div class="kp"><div class="v">100w+</div><div class="l">峰值 QPS</div></div>
+        </div>
+      </div>
+
+      <!-- C Xwatt -->
+      <div class="qcell">
+        <div class="ph"><span class="pc">C</span><span class="pn">Xwatt 研发平台</span></div>
+        <div class="psub">抽象重复问题 · 支撑 700+ 人研发团队</div>
+        <div class="flow col-dir" style="margin-bottom:0">
+          <span class="node">拆分研发流程 需求 › 设计 › 开发 › 发布</span>
+          <span class="node">在线协同建模 · 用例图/类图/时序图</span>
+          <span class="node">类图 › DB 表 › DAO 代码生成</span>
+        </div>
+        <ul style="margin-top:11px">
+          <li>统一管理，形成<b>知识沉淀</b>；DAO 一键生成 CRUD + 分页 + 事务</li>
+        </ul>
+        <div class="kpis">
+          <div class="kp"><div class="v">2000+</div><div class="l">项目落地</div></div>
+          <div class="kp"><div class="v">-80%</div><div class="l">手工编码</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="dots" id="dots"></div>
+<div class="nav">
+  <button class="arrow" id="prev">‹</button>
+  <span class="count"><span id="cur">01</span> / 02</span>
+  <button class="arrow" id="next">›</button>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const dotsWrap=document.getElementById('dots');
+  const prog=document.getElementById('prog');
+  const pad=n=>String(n).padStart(2,'0');
+  let i=0;
+  slides.forEach((_,k)=>{const d=document.createElement('i');d.onclick=()=>go(k);dotsWrap.appendChild(d)});
+  const dots=[...dotsWrap.children];
+  function go(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    dots.forEach((d,k)=>d.classList.toggle('on',k===i));
+    document.getElementById('cur').textContent=pad(i+1);
+    prog.style.width=((i+1)/slides.length*100)+'%';
+  }
+  document.getElementById('next').onclick=()=>go(i+1);
+  document.getElementById('prev').onclick=()=>go(i-1);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' ')go(i+1);
+    if(e.key==='ArrowLeft')go(i-1);
+  });
+  go(0);
+</script>
+</body>
+</html>
