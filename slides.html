@@ -273,10 +273,15 @@
             <span class="node">MR 审批</span>
           </div>
           <ul>
-            <li><b>评测基建</b>：LLM-as-Judge <span class="em">四维打分</span>——忠诚度 / 规范度 / 安全合规 / 自助业务完成率，集成 CI/CD</li>
-            <li><b>低成本回流</b>：一键标注近 <span class="em">100% 准确</span> Bad Case，<span class="em">6 维粗归因</span>——事实类 / 越权类 / 相关性 / 规范类 / 自助业务失效 / 兜底</li>
-            <li><b>诊断门禁</b>：抓 trace 定位失败阶段（历史理解 / 意图 / skill 命中 / 工具 / RAG / 生成）→ 提案 Diff → 回放验证 → MR；高危立即触发</li>
-          </ul>
+  <li><b>LLM-as-Judge 五维评测</b>：忠诚度 / 规范度 / 自助完成率 / 安全合规 / 多轮一致性；<span class="em">混淆矩阵</span>抽检 TPR·TNR&gt;85%、κ&gt;0.7 保信度</li>
+                  <li><b>低成本回流</b>：客服一键标注近 <span class="em">100% 准确</span> Bad Case，<span class="em">六维粗归因</span>——答错 / 规范违规 / 自助失效 / 安全违规 / 多轮矛盾 / 兜底</li>
+         <li><b>三轴 MECE 归因</b>：Where 坏在哪环（历史理解 / 意图 / skill 命中 / 工具调用 / RAG 召回 / 生成）× What 30 类失败模式 × Severity P0/P1/P2，按频次 × 危害聚合触发提案，P0直接触发</li>
+    </ul>
+          <div class="flow" style="margin:2px 0 9px">
+            <span class="node"><b>L1</b> 规则定位</span><span class="to">›</span>
+ <span class="node"><b>L2</b> LLM 裁判</span><span class="to">›</span>
+  <span class="node"><b>L3</b> 反事实消融</span>
+          </div>
           <div class="kpis">
             <div class="kp"><div class="v" style="color:var(--ochre)">50%→80%</div><div class="l">自助售后结单率</div></div>
             <div class="kp"><div class="v">+40 bp</div><div class="l">赔付满意度</div></div>
