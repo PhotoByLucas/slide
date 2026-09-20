@@ -155,6 +155,20 @@
   .idxrow .pc{font-family:var(--mono);color:var(--pine);font-size:11px;border:1px solid var(--line-2);
     border-radius:5px;padding:1px 7px;background:var(--surface)}
 
+  /* eval dimensions spec list */
+  .evh{font-size:12px;margin:2px 0 6px;color:var(--ink-soft)}
+  .evh b{color:var(--ink);font-weight:600}
+  .dims{display:flex;flex-direction:column;gap:5px}
+  .dim{display:grid;grid-template-columns:82px 1fr;gap:9px;align-items:baseline;font-size:11px;line-height:1.42}
+  .dim .dk{font-family:var(--mono);font-weight:600;font-size:10.5px;color:var(--pine);letter-spacing:.02em}
+  .dim .dd{color:var(--ink-soft)}
+  .dim.gate{margin-top:6px}
+  .dim.gate .dk{color:var(--ochre)}
+  .evmeta{font-size:10.5px;color:var(--muted);margin:8px 0 2px;line-height:1.45}
+  .evmeta .em{color:var(--pine-ink);font-weight:600}
+  .evh .em{color:var(--pine-ink);font-weight:600}
+  .dim .dd b{color:var(--ink);font-weight:600}
+
   /* nav */
   .nav{position:fixed;bottom:24px;right:32px;display:flex;align-items:center;gap:14px;z-index:20}
   .arrow{width:40px;height:40px;border-radius:8px;border:1px solid var(--line-2);cursor:pointer;
@@ -200,6 +214,7 @@
     .qcell{margin-bottom:12px;overflow:visible}
     .qcell:last-child{margin-bottom:0}
     .qcell.intro h1{font-size:19px}
+    .dim{grid-template-columns:72px 1fr;font-size:11.5px}
     /* touch-friendly nav */
     .sig{top:18px;left:16px;font-size:10px}
     .prog{height:3px}
@@ -272,16 +287,24 @@
             <span class="node">门禁验证</span><span class="to">›</span>
             <span class="node">MR 审批</span>
           </div>
-          <ul>
-  <li><b>LLM-as-Judge 五维评测</b>：忠诚度 / 规范度 / 自助完成率 / 安全合规 / 多轮一致性；<span class="em">混淆矩阵</span>抽检 TPR·TNR&gt;85%、κ&gt;0.7 保信度</li>
-                  <li><b>低成本回流</b>：客服一键标注近 <span class="em">100% 准确</span> Bad Case，<span class="em">六维粗归因</span>——答错 / 规范违规 / 自助失效 / 安全违规 / 多轮矛盾 / 兜底</li>
-         <li><b>三轴 MECE 归因</b>：Where 坏在哪环（历史理解 / 意图 / skill 命中 / 工具调用 / RAG 召回 / 生成）× What 30 类失败模式 × Severity P0/P1/P2，按频次 × 危害聚合触发提案，P0直接触发</li>
-    </ul>
-          <div class="flow" style="margin:2px 0 9px">
-            <span class="node"><b>L1</b> 规则定位</span><span class="to">›</span>
- <span class="node"><b>L2</b> LLM 裁判</span><span class="to">›</span>
-  <span class="node"><b>L3</b> 反事实消融</span>
+          <div class="evh"><b>评测基建： 规则检查 + LLM-as-Judge 六维打分</b> <span class="note">基线入 CI/CD</span></div>
+          <div class="dims">
+            <div class="dim"><span class="dk">忠诚度</span><span class="dd">规则 / 时效 / 金额 / 比例 / 责任结论均有事实依据</span></div>
+            <div class="dim"><span class="dk">规范度</span><span class="dd">非法工具调用率 + 格式/长度 + 无套话 + 不自称小助手 + 语气得体</span></div>
+            <div class="dim"><span class="dk">任务完成度</span><span class="dd">意图正确 + 外部状态<b>真达成</b>（售后单/赔付真变更，非 AI 自称）+ 无法自助时转人工/拒答</span></div>
+            <div class="dim"><span class="dk">工具与流程</span><span class="dd">工具选择 / 参数语义准确 + 幂等 + 必须/禁止/依赖约束（退款须先查单验身份、不重复调用）</span></div>
+            <div class="dim"><span class="dk">多轮一致性</span><span class="dd">跨轮不自相矛盾、不重复索取已知信息</span></div>
+            <div class="dim gate"><span class="dk">安全合规·硬门禁</span><span class="dd">越权 / PII / 有害 / 审批绕过 / 提示词注入 → <b>命中即拒</b>，不被其它高分加权抵消</span></div>
           </div>
+          <div class="evmeta"><span class="em">混淆矩阵</span>抽检 TPR·TNR&gt;85%、κ&gt;0.7</div>
+          <div class="evh" style="margin-top:8px"><b>低成本回流</b>：客服一键标注近 <span class="em">100% 准确</span> Bad Case，<span class="em">六维粗归因</span>——答错 / 规范违规 / 自助失效 / 安全违规 / 多轮矛盾 / 兜底</div>
+          <div class="evh"><b>三轴 MECE 归因</b>：Where 坏在哪环（历史理解 / 意图 / skill 命中 / 工具调用 / RAG 召回 / 生成）× What 30 类失败模式 × Severity P0/P1/P2，按频次 × 危害聚合触发提案，P0 直接触发</div>
+          <div class="evh" style="margin-top:2px"><b>三层引擎逐级坐实</b></div>
+          <ul style="margin-bottom:2px">
+            <li><b>L1 规则</b>：抓 trace 确定性信号（报错 / 空召回 / 计数）定位 Where</li>
+            <li><b>L2 LLM 裁判</b>：逐环节裁判，RAG 三元组分「召回缺失 vs 生成幻觉」定 What，结论绑 trace 证据、低置信弃权</li>
+            <li><b>L3 消融回放</b>：高危 / 低置信 case 反事实消融，单环节重放坐实因果根因</li>
+          </ul>
           <div class="kpis">
             <div class="kp"><div class="v" style="color:var(--ochre)">50%→80%</div><div class="l">自助售后结单率</div></div>
             <div class="kp"><div class="v">+40 bp</div><div class="l">赔付满意度</div></div>
