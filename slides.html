@@ -261,15 +261,11 @@
           <div class="arow"><div class="gutter"><span class="lc">SKL</span><span class="ln">Skill 层</span></div>
             <div class="abody">沉淀领域流程，<b>按意图动态加载 Skill 与 Tool</b>，削上下文并提升调用准确率</div></div>
           <div class="arow"><div class="gutter"><span class="lc">TOOL</span><span class="ln">工具层</span></div>
-            <div class="abody">参数幂等防重复写；错误码不透传，翻译为<b>「动作信号 + 事实文案」</b>；售后复杂流程状态机回滚 checkpoint</div></div>
+            <div class="abody">参数幂等防重复写；错误码不透传，翻译为<b>「动作信号 + 事实文案」</b>；售后等复杂流程使用状态机管理</div></div>
           <div class="arow"><div class="gutter"><span class="lc">MEM</span><span class="ln">记忆层</span></div>
             <div class="abody">会话级过滤，<b>90% 问题在 3 会话内</b>→3 窗口滑动 + 超窗摘要；工具结果存压缩版按需二查；长期记忆按订单维度过期</div></div>
         </div>
-      </div>
-
-      <!-- 右：防幻觉 + 自进化 -->
-      <div class="col">
-        <div class="sh"><span class="code">R1</span><span class="t">防幻觉 · 高可用</span></div>
+        <div class="sh" style="margin-top:14px"><span class="code">R1</span><span class="t">防幻觉 · 高可用</span></div>
         <div class="card" style="flex:none;margin-bottom:12px">
           <ul>
             <li><b>RAG</b>：query 改写 → BM25 + 向量<span class="em">四路召回</span> → RRF → 筛 <b>20 条</b></li>
@@ -278,7 +274,43 @@
             <li><b>情绪感知旁路</b>：高危负面 / 投诉切人工兜底</li>
           </ul>
         </div>
-        <div class="sh"><span class="code">R2</span><span class="t">自进化体系</span></div>
+      </div>
+
+      <!-- 右：评测基建 + 自进化飞轮 -->
+      <div class="col">
+        <div class="sh"><span class="code">R2</span><span class="t">基准评测基建</span></div>
+        <div class="card" style="flex:none;margin-bottom:12px">
+          <div class="evh"><b>评测集构建</b></div>
+          <div class="dims">
+            <div class="dim"><span class="dk">真实请求</span><span class="dd">线上采样</span></div>
+            <div class="dim"><span class="dk">边界场景</span><span class="dd">参数缺失 / 时间含糊 / 工具超时 / 空召回 / 长上下文</span></div>
+            <div class="dim"><span class="dk">对抗安全</span><span class="dd">提示词注入、诱导绕过确认</span></div>
+            <div class="dim"><span class="dk">badcase</span><span class="dd">历史badcase回流</span></div>
+          </div>
+          <!-- <div class="evmeta">每条样本存 <b>初态 + 目标态 + 允许/禁止动作 + 验证器/Rubric</b>；<span class="em">可复现</span>：mock_uin 隔离 + 固定初态 + 模型/prompt/工具/数据版本快照，按核心/高风险/长对话/badcase 切片对比，防「修好一类坏一类」</div> -->
+          <div class="evh" style="margin-top:8px"><b>六维打分</b> <span class="note">规则检查 + LLM-as-Judge</span></div>
+          <div class="dims">
+            <div class="dim"><span class="dk">忠诚度</span><span class="dd">规则 / 时效 / 金额 / 比例 / 责任结论均有事实依据</span></div>
+            <div class="dim"><span class="dk">规范度</span><span class="dd">非法工具调用率 + 格式/长度 + 无套话 + 不自称小助手 + 语气得体</span></div>
+            <div class="dim"><span class="dk">任务完成度</span><span class="dd">意图正确 + 外部状态<b>真达成</b>（售后单/赔付真变更，非 AI 自称）+ 无法自助时转人工/拒答</span></div>
+            <div class="dim"><span class="dk">工具与流程</span><span class="dd">工具选择 / 参数语义准确 + 幂等 + 必须/禁止/依赖约束（退款须先查单验身份、不重复调用）</span></div>
+            <div class="dim"><span class="dk">多轮一致性</span><span class="dd">跨轮不自相矛盾、不重复索取已知信息</span></div>
+          </div>
+          <div class="dim gate"><span class="dk">安全合规·硬门禁</span><span class="dd">越权 / PII / 有害 / 审批绕过 / 提示词注入 → <b>命中即拒</b>，不被其它高分加权抵消</span></div>
+          <div class="evmeta"><span class="em">混淆矩阵</span>抽检 TPR·TNR&gt;85%、κ&gt;0.7 保可信度</div>
+
+          <div class="evh" style="margin-top:8px"><b>线上监控指标</b></div>
+          <div class="tags">
+            <span class="tag">任务成功率</span>
+            <span class="tag">转人工率</span>
+            <span class="tag">p95 延迟</span>
+            <span class="tag">pass@1</span>
+            <span class="tag">工具有效调用率</span>
+            <span class="tag">每成功任务成本 = 总成本/成功任务数</span>
+          </div>
+        </div>
+
+        <div class="sh"><span class="code">R3</span><span class="t">自进化飞轮</span></div>
         <div class="card" style="flex:none">
           <div class="flow" style="margin-bottom:9px">
             <span class="node">数据回流</span><span class="to">›</span>
@@ -287,17 +319,7 @@
             <span class="node">门禁验证</span><span class="to">›</span>
             <span class="node">MR 审批</span>
           </div>
-          <div class="evh"><b>评测基建： 规则检查 + LLM-as-Judge 六维打分</b> <span class="note">基线入 CI/CD</span></div>
-          <div class="dims">
-            <div class="dim"><span class="dk">忠诚度</span><span class="dd">规则 / 时效 / 金额 / 比例 / 责任结论均有事实依据</span></div>
-            <div class="dim"><span class="dk">规范度</span><span class="dd">非法工具调用率 + 格式/长度 + 无套话 + 不自称小助手 + 语气得体</span></div>
-            <div class="dim"><span class="dk">任务完成度</span><span class="dd">意图正确 + 外部状态<b>真达成</b>（售后单/赔付真变更，非 AI 自称）+ 无法自助时转人工/拒答</span></div>
-            <div class="dim"><span class="dk">工具与流程</span><span class="dd">工具选择 / 参数语义准确 + 幂等 + 必须/禁止/依赖约束（退款须先查单验身份、不重复调用）</span></div>
-            <div class="dim"><span class="dk">多轮一致性</span><span class="dd">跨轮不自相矛盾、不重复索取已知信息</span></div>
-            <div class="dim gate"><span class="dk">安全合规·硬门禁</span><span class="dd">越权 / PII / 有害 / 审批绕过 / 提示词注入 → <b>命中即拒</b>，不被其它高分加权抵消</span></div>
-          </div>
-          <div class="evmeta"><span class="em">混淆矩阵</span>抽检 TPR/TNR&gt;85%、κ&gt;0.7</div>
-          <div class="evh" style="margin-top:8px"><b>低成本回流</b>：客服一键标注近 <span class="em">100% 准确</span> Bad Case，<span class="em">六维粗归因</span>——答错 / 规范违规 / 自助失效 / 安全违规 / 多轮矛盾 / 兜底</div>
+          <div class="evh"><b>低成本回流</b>：客服一键标注近 <span class="em">100% 准确</span> Bad Case，<span class="em">六维粗归因</span>——答错 / 规范违规 / 自助失效 / 安全违规 / 多轮矛盾 / 兜底</div>
           <div class="evh"><b>三轴 MECE 归因</b>：Where 坏在哪环（历史理解 / 意图 / skill 命中 / 工具调用 / RAG 召回 / 生成）× What 30 类失败模式 × Severity P0/P1/P2，按频次 × 危害聚合触发提案，P0 直接触发</div>
           <div class="evh" style="margin-top:2px"><b>三层引擎逐级坐实</b></div>
           <ul style="margin-bottom:2px">
@@ -314,7 +336,7 @@
       </div>
     </div>
 
-    <div class="sh" style="margin-top:14px"><span class="code">R3</span><span class="t">AI 研发运维基建</span></div>
+    <div class="sh" style="margin-top:14px"><span class="code">R4</span><span class="t">AI 研发运维基建</span></div>
     <div class="row" style="margin-bottom:2px">
       <div class="col card" style="flex:1.7"><ul><li><b>Coding Agent 自校验 + AI UAT</b>：Automator MCP + Skill 化，改动后操作模拟器抓日志/接口/截图自校验，并自主执行验收测试，覆盖 <b>30+ 消息类型</b></li></ul></div>
       <div class="col card" style="flex:1"><ul><li><b>CodeGraph 告警定位</b>：全链路定位，过滤网络波动等无效告警</li></ul></div>
