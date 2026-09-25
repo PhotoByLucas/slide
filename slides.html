@@ -268,7 +268,7 @@
         <div class="sh" style="margin-top:14px"><span class="code">R1</span><span class="t">防幻觉 · 高可用</span></div>
         <div class="card" style="flex:none;margin-bottom:12px">
           <ul>
-            <li><b>RAG</b>：query 改写 → BM25 + 向量<span class="em">四路召回</span> → RRF → 筛 <b>20 条</b></li>
+            <li><b>RAG</b>：query 改写 → 向量 + BM25 <span class="em">四路召回</span> → RRF → 重排筛 <b>20 条</b></li>
             <li>敏感事实<span class="em">强约束 API 实时取</span>并注入，阻断编造</li>
             <li>赔付接入审计流抽样 review；注入/敏感请求上游拦截</li>
             <li><b>情绪感知旁路</b>：高危负面 / 投诉切人工兜底</li>
